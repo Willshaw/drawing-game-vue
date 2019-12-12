@@ -20,7 +20,7 @@
         :fill="randoFill()"
       />
       <line
-        :key="index"
+        :key="index + 'l'"
         v-for="(line, index) in lines"
         :x1="line.x1"
         :y1="line.y1"
@@ -30,7 +30,13 @@
       />
       <polygon :points="trianglePoints" stroke="black" :fill="randoFill()" />
 
-      <path d="M 10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80" stroke="black" fill="none"/>
+      <path
+        :key="index"
+        v-for="(squiggle, index) in squiggles"
+        :d="squiggle"
+        stroke="black"
+        fill="none"
+      />
     </svg>
   </div>
 </template>
@@ -69,6 +75,37 @@ export default {
       const coordinates = `${c3.x},${c3.y} ${c2.x},${c2.y} ${c1.x},${c1.y}`;
       return coordinates;
       // return `150,15 200,100 100,100`;
+    },
+    squiggles: function squiggles() {
+      const buildCurve = function buildCurve(start) {
+        let curve = `M ${start.x} ${start.y}`;
+
+        curve += 'C ';
+        curve += `${start.x + 40} ${start.y + 10},`;
+        curve += ' ';
+        curve += `${start.x + 65} ${start.y + 10},`;
+        curve += ' ';
+        curve += `${start.x + 95} ${start.y + 80}`;
+
+        curve += 'S ';
+        curve += `${start.x + 150} ${start.y + 150},`;
+        curve += ' ';
+        curve += `${start.x + 180} ${start.y + 80}`;
+
+        // C 40 10, 65 10, 95 80 S 150 150, 180 80`;
+        return curve;
+      };
+
+      const start1 = this.startCoordsWithinSize(170);
+      const start2 = {
+        x: start1.x,
+        y: start1.y + 100,
+      };
+
+      return [
+        buildCurve(start1),
+        buildCurve(start2),
+      ];
     },
     lines: function lines() {
       const arrLines = [
